@@ -1,17 +1,40 @@
 {
-    "buildNpmdoc":"url-parse",
+    "author": "kai zhu <kaizhu256@gmail.com>",
+    "buildNpmdoc": "url-parse",
+    "description": "api documentation for [url-parse (v1.1.8)](https://github.com/unshiftio/url-parse#readme) [![npm package](https://img.shields.io/npm/v/npmdoc-url-parse.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-url-parse) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-url-parse.svg)](https://travis-ci.org/npmdoc/node-npmdoc-url-parse)",
     "devDependencies": {
-        "url-parse": "*",
         "electron-lite": "kaizhu256/node-electron-lite#alpha",
+        "url-parse": "*",
         "utility2": "kaizhu256/node-utility2#alpha"
     },
-    "name":"npmdoc-url-parse",
+    "engines": {
+        "node": ">=4.0"
+    },
+    "homepage": "https://github.com/npmdoc/node-npmdoc-url-parse",
+    "keywords": [
+        "documentation",
+        "url-parse"
+    ],
+    "license": "MIT",
+    "main": "lib.npmdoc_url_parse.js",
+    "name": "npmdoc-url-parse",
+    "nameAlias": "npmdoc_url_parse",
+    "nameOriginal": "npmdoc-url-parse",
+    "os": [
+        "darwin",
+        "linux"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/npmdoc/node-npmdoc-url-parse.git"
     },
     "scripts": {
-        "build-ci": "utility2 shReadmeTest build_ci.sh"
+        "build-ci": "utility2 shReadmeTest build_ci.sh",
+        "env": "env",
+        "heroku-postbuild": "(set -e; npm install \"kaizhu256/node-utility2#alpha\"; utility2 shDeployHeroku)",
+        "postinstall": "if [ -f npm_scripts.sh ]; then ./npm_scripts.sh postinstall; fi",
+        "start": "(set -e; export PORT=${PORT:-8080}; utility2 start test.js)",
+        "test": "(set -e; export PORT=$(utility2 shServerPortRandom); utility2 test test.js)"
     },
     "version": "0.0.1"
 }
