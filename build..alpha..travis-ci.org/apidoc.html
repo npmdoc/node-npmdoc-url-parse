@@ -63,6 +63,15 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.url-parse.url-parse">
+            function <span class="apidocSignatureSpan"></span>url-parse
+            <span class="apidocSignatureSpan">(address, location, parser)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.url-parse.extractProtocol">
             function <span class="apidocSignatureSpan">url-parse.</span>extractProtocol
             <span class="apidocSignatureSpan">(address)</span>
@@ -75,6 +84,15 @@
             <a class="apidocElementLiA" href="#apidoc.element.url-parse.location">
             function <span class="apidocSignatureSpan">url-parse.</span>location
             <span class="apidocSignatureSpan">(loc)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.url-parse.toString">
+            function <span class="apidocSignatureSpan">url-parse.</span>toString
+            <span class="apidocSignatureSpan">()</span>
             </a>
 
         </li>
@@ -113,6 +131,145 @@
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.url-parse" id="apidoc.module.url-parse">module url-parse</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.url-parse.url-parse" id="apidoc.element.url-parse.url-parse">
+        function <span class="apidocSignatureSpan"></span>url-parse
+        <span class="apidocSignatureSpan">(address, location, parser)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function URL(address, location, parser) {
+  if (!(this instanceof URL)) {
+    return new URL(address, location, parser);
+  }
+
+  var relative, extracted, parse, instruction, index, key
+    , instructions = rules.slice()
+    , type = typeof location
+    , url = this
+    , i = 0;
+
+  //
+  // The following if statements allows this module two have compatibility with
+  // 2 different API:
+  //
+  // 1. Node.js&#x27;s `url.parse` api which accepts a URL, boolean as arguments
+  //    where the boolean indicates that the query string should also be parsed.
+  //
+  // 2. The `URL` interface of the browser which accepts a URL, object as
+  //    arguments. The supplied object will be used as default values / fall-back
+  //    for relative paths.
+  //
+  if (&#x27;object&#x27; !== type &#x26;&#x26; &#x27;string&#x27; !== type) {
+    parser = location;
+    location = null;
+  }
+
+  if (parser &#x26;&#x26; &#x27;function&#x27; !== typeof parser) parser = qs.parse;
+
+  location = lolcation(location);
+
+  //
+  // Extract protocol information before running the instructions.
+  //
+  extracted = extractProtocol(address || &#x27;&#x27;);
+  relative = !extracted.protocol &#x26;&#x26; !extracted.slashes;
+  url.slashes = extracted.slashes || relative &#x26;&#x26; location.slashes;
+  url.protocol = extracted.protocol || location.protocol || &#x27;&#x27;;
+  address = extracted.rest;
+
+  //
+  // When the authority component is absent the URL starts with a path
+  // component.
+  //
+  if (!extracted.slashes) instructions[2] = [/(.*)/, &#x27;pathname&#x27;];
+
+  for (; i &#x3c; instructions.length; i++) {
+    instruction = instructions[i];
+    parse = instruction[0];
+    key = instruction[1];
+
+    if (parse !== parse) {
+      url[key] = address;
+    } else if (&#x27;string&#x27; === typeof parse) {
+      if (~(index = address.indexOf(parse))) {
+        if (&#x27;number&#x27; === typeof instruction[2]) {
+          url[key] = address.slice(0, index);
+          address = address.slice(index + instruction[2]);
+        } else {
+          url[key] = address.slice(index);
+          address = address.slice(0, index);
+        }
+      }
+    } else if ((index = parse.exec(address))) {
+      url[key] = index[1];
+      address = address.slice(0, index.index);
+    }
+
+    url[key] = url[key] || (
+      relative &#x26;&#x26; instruction[3] ? location[key] || &#x27;&#x27; : &#x27;&#x27;
+    );
+
+    //
+    // Hostname, host and protocol should be lowercased so they can be used to
+    // create a proper `origin`.
+    //
+    if (instruction[4]) url[key] = url[key].toLowerCase();
+  }
+
+  //
+  // Also parse the supplied query string in to an object. If we&#x27;re supplied
+  // with a custom parser as function use that instead of the default build-in
+  // parser.
+  //
+  if (parser) url.query = parser(url.query);
+
+  //
+  // If the URL is relative, resolve the pathname against the base URL.
+  //
+  if (
+      relative
+    &#x26;&#x26; location.slashes
+    &#x26;&#x26; url.pathname.charAt(0) !== &#x27;/&#x27;
+    &#x26;&#x26; (url.pathname !== &#x27;&#x27; || location.pathname !== &#x27;&#x27;)
+  ) {
+    url.pathname = resolve(url.pathname, location.pathname);
+  }
+
+  //
+  // We should not add port numbers if they are already the default port number
+  // for a given protocol. As the host also contains the port number we&#x27;re going
+  // override it with the hostname which contains no port number.
+  //
+  if (!required(url.port, url.protocol)) {
+    url.host = url.hostname;
+    url.port = &#x27;&#x27;;
+  }
+
+  //
+  // Parse down the `auth` for the username and password.
+  //
+  url.username = url.password = &#x27;&#x27;;
+  if (url.auth) {
+    instruction = url.auth.split(&#x27;:&#x27;);
+    url.username = instruction[0] || &#x27;&#x27;;
+    url.password = instruction[1] || &#x27;&#x27;;
+  }
+
+  url.origin = url.protocol &#x26;&#x26; url.host &#x26;&#x26; url.protocol !== &#x27;file:&#x27;
+    ? url.protocol +&#x27;//&#x27;+ url.host
+    : &#x27;null&#x27;;
+
+  //
+  // The href is just the compiled result.
+  //
+  url.href = url.toString();
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 
     <h2>
@@ -170,6 +327,37 @@
   return finaldestination;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.url-parse.toString" id="apidoc.element.url-parse.toString">
+        function <span class="apidocSignatureSpan">url-parse.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+ url.origin = url.protocol &#x26;&#x26; url.host &#x26;&#x26; url.protocol !== &#x27;file:&#x27;
+   ? url.protocol +&#x27;//&#x27;+ url.host
+   : &#x27;null&#x27;;
+
+ //
+ // The href is just the compiled result.
+ //
+ url.href = url.<span class="apidocCodeKeywordSpan">toString</span>();
+}
+
+/**
+* This is convenience method for changing properties in the URL instance to
+* insure that they all propagate correctly.
+*
+* @param {String} part          Property we need to adjust.
+...</pre></li>
     </ul>
 
 
