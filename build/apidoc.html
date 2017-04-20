@@ -49,8 +49,6 @@
 <h1>api documentation for
     <a
 
-        href="https://github.com/unshiftio/url-parse#readme"
-
     >url-parse (v1.1.8)</a>
 </h1>
 <h4>Small footprint URL parser that works seamlessly across Node.js and browser environments</h4>
@@ -84,15 +82,6 @@
             <a class="apidocElementLiA" href="#apidoc.element.url-parse.location">
             function <span class="apidocSignatureSpan">url-parse.</span>location
             <span class="apidocSignatureSpan">(loc)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.url-parse.toString">
-            function <span class="apidocSignatureSpan">url-parse.</span>toString
-            <span class="apidocSignatureSpan">()</span>
             </a>
 
         </li>
@@ -327,37 +316,6 @@
   return finaldestination;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.url-parse.toString" id="apidoc.element.url-parse.toString">
-        function <span class="apidocSignatureSpan">url-parse.</span>toString
-        <span class="apidocSignatureSpan">()</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">toString = function () {
-    return text;
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
- url.origin = url.protocol &#x26;&#x26; url.host &#x26;&#x26; url.protocol !== &#x27;file:&#x27;
-   ? url.protocol +&#x27;//&#x27;+ url.host
-   : &#x27;null&#x27;;
-
- //
- // The href is just the compiled result.
- //
- url.href = url.<span class="apidocCodeKeywordSpan">toString</span>();
-}
-
-/**
-* This is convenience method for changing properties in the URL instance to
-* insure that they all propagate correctly.
-*
-* @param {String} part          Property we need to adjust.
-...</pre></li>
     </ul>
 
 
